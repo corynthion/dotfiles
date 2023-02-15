@@ -1,0 +1,74 @@
+# LS
+alias ls='exa -al --color=always --group-directories-first'
+alias l=ls
+alias history="history 1"
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+alias recomplete="rm -f $ZDOTDIR/.zcompdump; compinit"
+
+alias kknamespace="kubectl get ns"
+alias kkpv="kubectl get pv"
+alias kkdescribe="kubectl describe"
+alias kksc="kubectl get sc"
+alias kkpvc="kubectl get pvc"
+alias kkpods="kubectl get pods"
+alias kknodes="kubectl get nodes"
+alias kkconfigmap="kubectl get configmap"
+alias kkservice="kubectl get service"
+
+# GREP
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# Confirm cp, mv, and rm commands
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='rm -i'
+alias df='df -h'
+
+alias d=clear
+alias q=exit
+alias c=cd
+alias cat="bat --theme=Nord"
+alias free='free -m'
+
+alias edit-zshenv="vim $HOME/.zshenv"
+alias edit-zshrc="vim $ZDOTDIR/.zshrc"
+alias edit-zshalias="vim $ZDOTDIR/.zshalias"
+alias edit-nvim="vim $XDG_CONFIG_HOME/nvim/init.lua"
+alias dotfiles="cd $HOME/code/dotfiles && ls"
+
+# Processes
+alias psa="ps auxf"
+alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias psmem='ps auxf | sort -nr -k 4'
+alias pscpu='ps auxf | sort -nr -k 3'
+
+alias g-addup='git add -u'
+alias g-addall='git add .'
+alias g-branch='git branch'
+alias g-checkout='git checkout'
+alias g-clone='git clone'
+alias g-commit='git commit -m'
+alias g-fetch='git fetch'
+alias g-pull='git pull origin'
+alias g-push='git push origin'
+alias g-status='git status'  
+alias g-tag='git tag'
+alias g-newtag='git tag -a'
+alias g-restore='git restore'
+alias g-remote='git remote'
+alias g-diff='git diff'
+
+alias trp='trash-put'
+alias tre='trash-empty'
+alias trl='trash-list'
+alias trr='trash-restore'
+alias trm='trash-rm'
+alias vim='nvim'
+
+alias v='vim'
+alias vi='vim'
