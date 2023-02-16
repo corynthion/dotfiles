@@ -5,7 +5,17 @@ alias history="history 1"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
-
+alias ls="ls -AG"
+alias l="ls"
+alias ll="ls -l"
+alias q="exit"
+alias d="clear"
+alias c="cd"
+# alias python=python3
+# alias pip=pip3
+# alias vim=nvim
+# alias v=vim
+# alias vi=vim
 alias recomplete="rm -f $ZDOTDIR/.zcompdump; compinit"
 
 alias kknamespace="kubectl get ns"

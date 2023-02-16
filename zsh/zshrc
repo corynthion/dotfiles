@@ -1,2 +1,5 @@
 export PATH=/usr/local/bin/code:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-
+export GOPATH="$HOME/code/prod/gopath"
+export MYPYPATH="$HOME//mypy_stubs"
+PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="$PATH:$GOPATH/bin"
