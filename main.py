@@ -1,46 +1,80 @@
+import shutil
+import time
 from pathlib import Path
-#    import os
-#    import shutil
-#    import subprocess
-#    import time
-#    import platform
-#    import distro
+from typing import Callable, Generator
 
-#    Set the dotfiles XDG variables
-#    XDG_DATA_HOME ="$HOME/.local/share"
-#    XDG_CACHE_HOME ="$HOME/.cache"
-#    XDG_CONFIG_HOME ="$HOME/.config"
-#    DOTFILES = os.getcwd()
-#    XDG_CONFIG_DIR = os.path.expanduser('~/.config')
-#    ZDOTDIR = os.path.join(XDG_CONFIG_DIR, 'zsh')
 
-def dotfiles_check_path(cwd: Path, file: Path):
-	try:
-		parent_dir = file.parent 
-		if cwd != parent_dir:
-			raise ValueError(f"Please run this file from within the directory {parent_dir}.")
-	except ValueError as error:
-		print(error)
+def remove_dotfiles(get_dotfiles: Callable[[], Generator[Path, None, None]]) -> None:
+    dotfiles: Generator[Path, None, None] = get_dotfiles()
+    for dotfile in dotfiles:
+        if dotfile.exists():
+            if dotfile.is_file():
+                dotfile.unlink()
+            elif dotfile.is_dir():
+                shutil.rmtree(str(dotfile))
 
-def main():
-	cwd = Path.cwd()
-	this_file = Path(__file__)
-	dotfiles_check_path(cwd, this_file)
+
+def backup_dotfile(dotfile: Path, backup_dir: Path) -> None:
+    backup_path: Path = backup_dir / dotfile.name
+    if dotfile.is_file():
+        shutil.copy(str(dotfile), str(backup_path))
+    elif dotfile.is_dir():
+        shutil.copytree(str(dotfile), str(backup_path))
+
+
+def backup_dotfiles(
+    backup_dir: Path, get_dotfiles: Callable[[], Generator[Path, None, None]]
+) -> None:
+    dotfiles: Generator[Path, None, None] = get_dotfiles()
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S")
+    backup_sub_dir: Path = backup_dir / f"dotfiles_{timestamp}"
+    backup_sub_dir.mkdir(parents=True, exist_ok=True)
+    for dotfile in dotfiles:
+        if dotfile.exists():
+            backup_dotfile(dotfile, backup_sub_dir)
+
+
+def get_dotfiles() -> Generator[Path, None, None]:
+    home_dir: Path = Path.home()
+    dotfiles: Generator[Path, None, None] = home_dir.glob(".*")
+    return (
+        dotfile for dotfile in dotfiles if dotfile.name not in [".", "..", ".Trash"]
+    )
+
+
+def has_dotfiles(get_dotfiles: Callable[[], Generator[Path, None, None]]) -> bool:
+    try:
+        next(get_dotfiles())
+        return True
+    except StopIteration:
+        return False
+
+
+def get_paths() -> dict[str, Path]:
+    script_dir: Path = Path(__file__).parent
+    if Path.cwd() != script_dir:
+        raise ValueError(f"Run this file from within the {script_dir} directory.")
+    home_dir: Path = Path.home()
+    return {
+        "backup_dir": home_dir / "dotfiles_backup",
+        "xdg_data_home": home_dir / ".local" / "share",
+        "xdg_cache_home": home_dir / ".cache",
+        "xdg_config_home": home_dir / ".config",
+    }
+
+
+def main() -> None:
+    paths: dict[str, Path] = get_paths()
+    if has_dotfiles(get_dotfiles):
+        backup_dotfiles(paths["backup_dir"], get_dotfiles)
+        remove_dotfiles(get_dotfiles)
+    # else:
+    # print("No dotfiles found.")
+
 
 if __name__ == "__main__":
-	main()
+    main()
 
-
-#    
-#    def dotfiles_backup():
-#    	pass
-#    
-#    def dotfiles_remove():
-#    	pass
-#    
-#    def dotfiles_install():
-#	pass
-#    
 #    # ZSH
 #    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 #    export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/.starship.toml"
@@ -48,17 +82,6 @@ if __name__ == "__main__":
 #    # Create the XDG_CONFIG_DIR if it doesn't exist
 #    if not os.path.exists(os.path.expanduser('~/.config')):
 #        os.mkdir(os.path.expanduser('~/.config'))
-
-#    # Remove existing dotfiles
-#    shutil.rmtree(os.path.expanduser('~/.config'))
-#    shutil.rmtree(os.path.expanduser('~/.local'))
-#    shutil.rmtree(os.path.expanduser('~/.cache'))
-#    shutil.rmtree(os.path.expanduser('~/.ssh'))
-#    os.remove(os.path.expanduser('~/.viminfo'))
-
-#    for file in os.listdir(os.path.expanduser('~')):
-#        if file.startswith('.zsh') or file.startswith('.bash'):
-#            os.remove(os.path.join(os.path.expanduser('~'), file))
 
 #    # Create new directories
 #    os.makedirs(os.path.expanduser('~/.config'))
@@ -95,27 +118,6 @@ if __name__ == "__main__":
 #    subprocess.run(['npm', 'install', '-g', 'npm'])
 #    subprocess.run(['npm', 'install', '-g', 'ne
 
-#    # Name of the directory to back up
-#    directory_name = 'my_directory'
-
-#    # Create a timestamp string for the backup directory name
-#    timestamp = time.strftime('%Y-%m-%d-%H-%M-%S')
-
-#    # Name of the backup directory
-#    backup_name = f'{directory_name}_backup_{timestamp}'
-
-#    # Path of the original directory to back up
-#    original_directory_path = os.path.join(os.getcwd(), directory_name)
-
-#    # Path of the backup directory
-#    backup_directory_path = os.path.join(os.getcwd(), backup_name)
-
-#    # Create the backup directory
-#    shutil.copytree(original_directory_path, backup_directory_path)
-
-#    # Delete the original directory and its contents
-#    shutil.rmtree(original_directory_path)
-
 #    # Get the name of the operating system
 #    os_name = platform.system()
 #    if os_name == 'Darwin':  # Mac OS X
@@ -129,24 +131,3 @@ if __name__ == "__main__":
 #        # Get the distribution of the operating system
 #        linux_distribution = distro.name()
 #        print(f"Distribution: {linux_distribution}")
-
-#    # Name of the directory to back up
-#    directory_name = 'my_directory'
-
-#    # Create a timestamp string for the backup directory name
-#    timestamp = time.strftime('%Y-%m-%d-%H-%M-%S')
-
-#    # Name of the backup directory
-#    backup_name = f'{directory_name}_backup_{timestamp}'
-
-#    # Path of the original directory to back up
-#    original_directory_path = os.path.join(os.getcwd(), directory_name)
-
-#    # Path of the backup directory
-#    backup_directory_path = os.path.join(os.getcwd(), backup_name)
-
-#    # Create the backup directory
-#    shutil.copytree(original_directory_path, backup_directory_path)
-
-#    # Delete the original directory and its contents
-#    shutil.rmtree(original_directory_path)

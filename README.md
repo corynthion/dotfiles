@@ -42,3 +42,4 @@ echo "Installing tldr command"
 echo "Installing tokei command"
 echo "Installing hyperfine command"
 echo "Installing speedread command"
+
