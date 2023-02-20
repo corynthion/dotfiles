@@ -1,133 +1,131 @@
-import shutil
-import time
+# from builtins import print
+# import shutil
+# import time
 from pathlib import Path
-from typing import Callable, Generator
+
+# from typing import Callable, Generator, Any, Literal
+
+# BACKUP_AND_DELETE_DOTFILES: Literal[False] = False
 
 
-def remove_dotfiles(get_dotfiles: Callable[[], Generator[Path, None, None]]) -> None:
-    dotfiles: Generator[Path, None, None] = get_dotfiles()
-    for dotfile in dotfiles:
-        if dotfile.exists():
-            if dotfile.is_file():
-                dotfile.unlink()
-            elif dotfile.is_dir():
-                shutil.rmtree(str(dotfile))
+# def filter_dotfiles() -> None:
+#     ...
 
 
-def backup_dotfile(dotfile: Path, backup_dir: Path) -> None:
-    backup_path: Path = backup_dir / dotfile.name
-    if dotfile.is_file():
-        shutil.copy(str(dotfile), str(backup_path))
-    elif dotfile.is_dir():
-        shutil.copytree(str(dotfile), str(backup_path))
+# def remove_dotfiles(dotfiles: Callable[[], Generator[Path, None, None]]) -> None:
+#     dotfiles_gen: Generator[Path, None, None] = dotfiles()
+#     for dotfile in dotfiles_gen:
+#         if dotfile.exists():
+#             if dotfile.is_file():
+#                 dotfile.unlink()
+#             elif dotfile.is_dir():
+#                 shutil.rmtree(str(dotfile))
 
 
-def backup_dotfiles(
-    backup_dir: Path, get_dotfiles: Callable[[], Generator[Path, None, None]]
-) -> None:
-    dotfiles: Generator[Path, None, None] = get_dotfiles()
-    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S")
-    backup_sub_dir: Path = backup_dir / f"dotfiles_{timestamp}"
-    backup_sub_dir.mkdir(parents=True, exist_ok=True)
-    for dotfile in dotfiles:
-        if dotfile.exists():
-            backup_dotfile(dotfile, backup_sub_dir)
+# def backup_dotfile(dotfile: Path, backup_dir: Path) -> None:
+#     backup_path: Path = backup_dir / dotfile.name
+#     if dotfile.is_file():
+#         shutil.copy(str(dotfile), str(backup_path))
+#     elif dotfile.is_dir():
+#         shutil.copytree(str(dotfile), str(backup_path))
 
 
-def get_dotfiles() -> Generator[Path, None, None]:
-    home_dir: Path = Path.home()
-    dotfiles: Generator[Path, None, None] = home_dir.glob(".*")
-    return (
-        dotfile for dotfile in dotfiles if dotfile.name not in [".", "..", ".Trash"]
-    )
+# def backup_dotfiles(
+#     backup_dir: Path, files: Callable[[Path, str], Generator[Path, None, None]]
+# ) -> None:
+#     home: Path = Path.home()
+#     find: Literal[".*"] = ".*"
+#     dotfiles_gen: Generator[Path, None, None] = files(home, find)
+#     timestamp: str = time.strftime("%Y-%m-%d-%H-%M-%S")
+#     backup_sub_dir: Path = backup_dir / f"dotfiles_{timestamp}"
+#     backup_sub_dir.mkdir(parents=True, exist_ok=True)
+#     for dotfile in dotfiles_gen:
+#         if dotfile.exists():
+#             backup_dotfile(dotfile, backup_sub_dir)
 
 
-def has_dotfiles(get_dotfiles: Callable[[], Generator[Path, None, None]]) -> bool:
-    try:
-        next(get_dotfiles())
-        return True
-    except StopIteration:
-        return False
+# def create_xdg_dirs() -> None:
+#     path: dict[str, Any] = get_paths()
+#     xdg_dirs: dict[str, Path] = path["xdg_dirs"]
+#     for xdg_dir in xdg_dirs.values():
+#         xdg_dir.mkdir(parents=True, exist_ok=True)
 
 
-def get_paths() -> dict[str, Path]:
+# def configure_zsh() -> None:
+#     path: dict[str, Any] = get_paths()
+#     xdg_dirs: dict[str, Path] = path["xdg_dirs"]
+#     zdot_dir: Path = xdg_dirs["xdg_config_home"] / "zsh"
+#     zdot_dir.mkdir(parents=True, exist_ok=True)
+#     config_dir: Path = path["config"]
+#     zsh_config_dir: Path = config_dir / "zsh"
+#     zsh_config_files: Generator[Path, None, None] = get_files(zsh_config_dir, "*")
+#     for zsh_config_file in zsh_config_files:
+#         if zsh_config_file.name == "zshenv":
+#             dest_file: Path = path["home"] / f".{zsh_config_file.name}"
+#             dest_file.symlink_to(zsh_config_file)
+#         else:
+#             dest_file: Path = zdot_dir / f".{zsh_config_file.name}"
+#             dest_file.symlink_to(zsh_config_file)
+
+
+# def get_files(path: Path, find: str) -> Generator[Path, None, None]:
+#     return path.glob(find)
+
+
+def get_paths() -> dict[str, dict[str, Path]]:
     script_dir: Path = Path(__file__).parent
     if Path.cwd() != script_dir:
         raise ValueError(f"Run this file from within the {script_dir} directory.")
     home_dir: Path = Path.home()
+    dotfiles_dirs: dict[str, Path] = {
+        "dotfiles": script_dir,
+        "configs": script_dir / "configs",
+        "backups": home_dir / "dotfiles_backups",
+    }
+    xdg_dirs: dict[str, Path] = {
+        "data": home_dir / ".local" / "share",
+        "cache": home_dir / ".cache",
+        "config": home_dir / ".config",
+    }
     return {
-        "backup_dir": home_dir / "dotfiles_backup",
-        "xdg_data_home": home_dir / ".local" / "share",
-        "xdg_cache_home": home_dir / ".cache",
-        "xdg_config_home": home_dir / ".config",
+        "dotfiles": dotfiles_dirs,
+        "xdg": xdg_dirs,
     }
 
 
+# def get_dotfiles() -> Generator[Path, None, None]:
+#     dotfiles_gen: Generator[Path, None, None] = Path.home().glob(".*")
+#     return (
+#         dotfile for dotfile in dotfiles_gen if dotfile.name not in [".", "..", ".Trash"]
+#     )
+
+
+# def get_files(path: Path, find: str) -> Generator[Path, None, None]:
+#     return path.glob(find)
+
+
+# def has_dotfiles(files: Callable[[Path, str], Generator[Path, None, None]]) -> bool:
+#     try:
+#         home: Path = Path.home()
+#         find: Literal[".*"] = ".*"
+#         next(files(home, find))
+#         return True
+#     except StopIteration:
+#         return False
+
+
 def main() -> None:
-    paths: dict[str, Path] = get_paths()
-    if has_dotfiles(get_dotfiles):
-        backup_dotfiles(paths["backup_dir"], get_dotfiles)
-        remove_dotfiles(get_dotfiles)
-    # else:
-    # print("No dotfiles found.")
+    paths: dict[str, dict[str, Path]] = get_paths()
+    print(paths)
+
+
+#     if BACKUP_AND_DELETE_DOTFILES:
+#         if has_dotfiles(get_files):
+#             backup_dotfiles(paths["backup_dir"], get_dotfiles)
+#             remove_dotfiles(get_dotfiles)
+#     create_xdg_dirs()
+#     configure_zsh()
 
 
 if __name__ == "__main__":
     main()
-
-#    # ZSH
-#    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-#    export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/.starship.toml"
-#
-#    # Create the XDG_CONFIG_DIR if it doesn't exist
-#    if not os.path.exists(os.path.expanduser('~/.config')):
-#        os.mkdir(os.path.expanduser('~/.config'))
-
-#    # Create new directories
-#    os.makedirs(os.path.expanduser('~/.config'))
-#    os.makedirs(os.path.expanduser('~/.local'))
-#    os.makedirs(os.path.expanduser('~/.cache'))
-
-#    # Set up Zsh
-#    os.makedirs(os.path.join(ZDOTDIR, 'plugins'))
-#    os.symlink(os.path.join(DOTFILES, 'config/zsh/zshenv'), os.path.expanduser('~/.zshenv'))
-#    os.symlink(os.path.join(DOTFILES, 'config/zsh/zshrc'), os.path.join(ZDOTDIR, '.zshrc'))
-#    os.symlink(os.path.join(DOTFILES, 'config/zsh/zshalias'), os.path.join(ZDOTDIR, '.zshalias'))
-#    subprocess.run(['git', 'clone', 'https://github.com/zsh-users/zsh-syntax-highlighting.git'])
-#    subprocess.run(['git', 'clone', 'https://github.com/zsh-users/zsh-autosuggestions.git'])
-#    subprocess.run(['git', 'clone', 'https://github.com/zsh-users/zsh-completions.git'])
-#    subprocess.run(['git', 'clone', 'https://github.com/MichaelAquilina/zsh-you-should-use.git'])
-#    shutil.move('zsh-*', os.path.join(ZDOTDIR, 'plugins'))
-
-#    # Set up Starship Prompt
-#    os.symlink(os.path.join(DOTFILES, 'config/starship'), os.path.join(XDG_CONFIG_DIR, 'starship'))
-
-#    # Set up Nord Color Iterm2
-#    subprocess.run(['curl', '-OL', 'https://github.com/arcticicestudio/nord-iterm2/archive/refs/tags/v0.2.0.zip'])
-#    subprocess.run(['unzip', 'v0.2.0.zip'])
-#    shutil.move('nord-iterm2-0.2.0/src/xml/Nord.itermcolors', os.path.join(XDG_CONFIG_DIR, 'Nord.itermcolors'))
-#    os.remove('v0.2.0.zip')
-#    shutil.rmtree('nord-iterm2-0.2.0')
-
-#    # Set up Neovim
-#    os.symlink(os.path.join(DOTFILES, 'config/nvim'), os.path.join(XDG_CONFIG_DIR, 'nvim'))
-#    subprocess.run(['python3', '-m', 'pip', 'install', '--user', '--upgrade', 'pynvim'])
-#    subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
-#    subprocess.run(['sudo', 'gem', 'install', 'neovim'])
-#    subprocess.run(['brew', 'install', 'node'])
-#    subprocess.run(['npm', 'install', '-g', 'npm'])
-#    subprocess.run(['npm', 'install', '-g', 'ne
-
-#    # Get the name of the operating system
-#    os_name = platform.system()
-#    if os_name == 'Darwin':  # Mac OS X
-#        # Get the version of the operating system
-#        os_version = platform.mac_ver()[0]
-#        print(f"Mac OS X version: {os_version}")
-#    elif os_name == 'Linux':  # Linux
-#        # Get the version of the operating system
-#        os_version = platform.release()
-#        print(f"Linux version: {os_version}")
-#        # Get the distribution of the operating system
-#        linux_distribution = distro.name()
-#        print(f"Distribution: {linux_distribution}")
