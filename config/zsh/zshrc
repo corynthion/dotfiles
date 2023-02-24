@@ -11,7 +11,6 @@ autoload -U colors && colors
 autoload -U compinit && compinit -u
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
 zmodload zsh/complist
 compinit
 compinit -d $XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION
@@ -34,16 +33,18 @@ bindkey -M menuselect 'down' vi-down-line-or-history
 bindkey -M menuselect 'up' vi-up-line-or-history
 bindkey -M menuselect 'right' vi-forward-char
 
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
-source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh 2>/dev/null
-source /usr/share/doc/pkgfile/command-not-found.zsh 2>/dev/null
-
 # Spaceship Prompt
 autoload -U promptinit; promptinit
 # prompt spaceship
 
 # Load aliases and shortcuts if existent.
 [ -f "$ZDOTDIR/.zshalias" ] && source "$ZDOTDIR/.zshalias"
+
+! command -v starship >/dev/null 2>&1 && "$ZDOTDIR/plugins/starship-prompt/install/install.sh"
+source "$ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
+source "$ZDOTDIR/plugins/zsh-you-should-use/you-should-use.plugin.zsh" 2>/dev/null
+source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
+fpath=("$ZDOTDIR/plugins/zsh-completions/src" $fpath)
 
 setopt SHARE_HISTORY
 eval "$(/opt/homebrew/bin/brew shellenv)"

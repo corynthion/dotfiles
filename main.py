@@ -3,7 +3,7 @@ import time
 from pathlib import Path
 from typing import Generator
 import platform
-import distro
+# import distro
 import subprocess
 
 BACKUP_AND_DELETE_DOTFILES: bool = True
@@ -94,45 +94,36 @@ def create_xdg_dirs(xdg_dirs: dict[str, Path]) -> None:
         xdg_dir.mkdir(parents=True, exist_ok=True)
 
 
-# def configure_zsh(home: Path, config_dir: Path, xdg_dirs: dict[str, Path]) -> None:
-#     zsh_config_dir: Path = config_dir / "zsh"
-#     zsh_plugins_dir: Path = zsh_config_dir / "plugins"
-#     zsh_plugins: dict[str, str] = {
-#         "starship_prompt": "https://github.com/arcticicestudio/nord-iterm2",
-#         "zsh-syntax-highlighting": "https://github.com/zsh-users/zsh-syntax-highlighting.git",
-#         "zsh-autosuggestions": "https://github.com/zsh-users/zsh-autosuggestions.git",
-#         "zsh-completions": "https://github.com/zsh-users/zsh-completions.git",
-#         "zsh-you-should-use": "https://github.com/MichaelAquilina/zsh-you-should-use.git",
-#     }
-#     for plugin_name, plugin_url in zsh_plugins.items():
-#         plugin_dir: Path = zsh_plugins_dir / plugin_name
-#         plugin_dir.mkdir(parents=True, exist_ok=True)
-#         subprocess.run(["git", "clone", plugin_url, plugin_dir])
-    # zdot_dir: Path = xdg_dirs["config"] / "zsh"
-    # zdot_dir.mkdir(parents=True, exist_ok=True)
-    # zsh_files: Generator[Path, None, None] = get_files(zsh_config_dir, "*")
-
-
-
-
-    # for zsh_file in zsh_files:
-    #     if zsh_file.name == "zshenv":
-    #         dest_file: Path = home / f".{zsh_file.name}"
-    #         dest_file.symlink_to(zsh_file)
-    #     else:
-    #         dest_file: Path = zdot_dir / f".{zsh_file.name}"
-    #         dest_file.symlink_to(zsh_file)
-
-
-# echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
-# source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-# source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
+def configure_zsh(home: Path, config_dir: Path, xdg_dirs: dict[str, Path]) -> None:
+    zsh_local_dir: Path = config_dir / "zsh"
+    zsh_files: Generator[Path, None, None] = get_files(zsh_local_dir, "*")
+    zdot_dir: Path = xdg_dirs["config"] / "zsh"
+    zdot_dir.mkdir(parents=True, exist_ok=True)
+    for zsh_file in zsh_files:
+        if zsh_file.name == "zshenv":
+            dest_file: Path = home / f".{zsh_file.name}"
+            dest_file.symlink_to(zsh_file)
+        else:
+            dest_file: Path = zdot_dir / f".{zsh_file.name}"
+            dest_file.symlink_to(zsh_file)
+    zsh_plugins_dir: Path = zdot_dir / "plugins"
+    zsh_plugins: dict[str, str] = {
+        "starship-prompt": "https://github.com/starship/starship.git",
+        "zsh-syntax-highlighting": "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+        "zsh-autosuggestions": "https://github.com/zsh-users/zsh-autosuggestions.git",
+        "zsh-completions": "https://github.com/zsh-users/zsh-completions.git",
+        "zsh-you-should-use": "https://github.com/MichaelAquilina/zsh-you-should-use.git",
+    }
+    for plugin_name, plugin_url in zsh_plugins.items():
+        plugin_dir: Path = zsh_plugins_dir / plugin_name
+        plugin_dir.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "clone", plugin_url, plugin_dir])
 
 
 def main() -> None:
-    # base_dirs: dict[str, Path] = get_paths()["base_dirs"]
-    # xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
-    # home: Path = base_dirs["home"]
+    base_dirs: dict[str, Path] = get_paths()["base_dirs"]
+    xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
+    home: Path = base_dirs["home"]
     # get_os()
     # if BACKUP_AND_DELETE_DOTFILES:
     #     filter: list[str] = [".Trash", ".vscode", ".ssh", ".zprofile", ".gitconfig"]
@@ -141,8 +132,8 @@ def main() -> None:
     #         backup_dotfiles(home, backup_dir, filter)
     #         remove_dotfiles(home, filter)
     # create_xdg_dirs(xdg_dirs)
-    # config_dir: Path = base_dirs["config"]
-    # configure_zsh(home, config_dir, xdg_dirs)
+    config_dir: Path = base_dirs["config"]
+    configure_zsh(home, config_dir, xdg_dirs)
 
 
 if __name__ == "__main__":
