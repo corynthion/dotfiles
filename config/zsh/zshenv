@@ -12,7 +12,7 @@ export SAVEHIST=20000
 export KEYTIMEOUT=1
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/.starship.toml"
 
-# Terminal 
+# # Terminal 
 export TERM=xterm-256color
 export EDITOR=vim
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
@@ -23,4 +23,4 @@ export VISUAL="nvim"
 export COLORTERM="truecolor"
 export PAGER="less"
 
-typeset -U PATH path
+export MYPYPATH="$HOME/mypy_stubs"

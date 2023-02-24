@@ -1,23 +1,48 @@
-# LS
-alias ls='exa -al --color=always --group-directories-first'
+# Edit Configs
+alias edit-zshenv="vim $HOME/.zshenv"
+alias edit-zshrc="vim $ZDOTDIR/.zshrc"
+alias edit-zshalias="vim $ZDOTDIR/.zshalias"
+alias edit-nvim="vim $XDG_CONFIG_HOME/nvim/init.lua"
+
+# # LS
+alias c=cd
+alias ls="ls -AG"
 alias l=ls
-alias history="history 1"
+alias ll="ls -l"
+# alias ls='exa -al --color=always --group-directories-first'
+
+alias history="history 0"
+
+alias c="cd"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias ls="ls -AG"
-alias l="ls"
-alias ll="ls -l"
+
 alias q="exit"
 alias d="clear"
-alias c="cd"
-# alias python=python3
-# alias pip=pip3
+
+alias python=python3
+alias pip=pip3
+alias v=vim
+alias vi=vim
 # alias vim=nvim
-# alias v=vim
-# alias vi=vim
+
+# GREP
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+alias cp="cp -r"
+alias df='df -h'
+
+alias d=clear
+alias q=exit
+# alias cat="bat --theme=Nord"
+alias free='free -m'
+
 alias recomplete="rm -f $ZDOTDIR/.zcompdump; compinit"
 
+# Kubernetes
 alias kknamespace="kubectl get ns"
 alias kkpv="kubectl get pv"
 alias kkdescribe="kubectl describe"
@@ -28,30 +53,7 @@ alias kknodes="kubectl get nodes"
 alias kkconfigmap="kubectl get configmap"
 alias kkservice="kubectl get service"
 
-# GREP
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-# Confirm cp, mv, and rm commands
-alias cp="cp -i"
-alias mv='mv -i'
-alias rm='rm -i'
-alias df='df -h'
-
-alias d=clear
-alias q=exit
-alias c=cd
-alias cat="bat --theme=Nord"
-alias free='free -m'
-
-alias edit-zshenv="vim $HOME/.zshenv"
-alias edit-zshrc="vim $ZDOTDIR/.zshrc"
-alias edit-zshalias="vim $ZDOTDIR/.zshalias"
-alias edit-nvim="vim $XDG_CONFIG_HOME/nvim/init.lua"
-alias dotfiles="cd $HOME/code/dotfiles && ls"
-
-# Processes
+# # Processes
 alias psa="ps auxf"
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias psmem='ps auxf | sort -nr -k 4'
@@ -72,13 +74,3 @@ alias g-newtag='git tag -a'
 alias g-restore='git restore'
 alias g-remote='git remote'
 alias g-diff='git diff'
-
-alias trp='trash-put'
-alias tre='trash-empty'
-alias trl='trash-list'
-alias trr='trash-restore'
-alias trm='trash-rm'
-alias vim='nvim'
-
-alias v='vim'
-alias vi='vim'

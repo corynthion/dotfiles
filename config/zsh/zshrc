@@ -1,10 +1,52 @@
-export PATH=/usr/local/bin/code:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export GOPATH="$HOME/code/prod/gopath"
-export MYPYPATH="$HOME//mypy_stubs"
-PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-export PATH="$PATH:$GOPATH/bin"
+export OLD_PATH="$PATH"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+typeset -U PATH path
+
+# Neofetch 
+# neofetch
+
+# Enable colors and change prompt:
+autoload -U colors && colors
+
+autoload -U compinit && compinit -u
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
+zmodload zsh/complist
+compinit
+compinit -d $XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION
+_comp_options+=(globdots)		# Include hidden files.
+
+# Enable searching through history
+bindkey '^R' history-incremental-pattern-search-backward
+
+# Edit line in vim with ctrl-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^e' edit-command-line
+
+# Use vim keys in tab complete menu:
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'left' vi-backward-char
+bindkey -M menuselect 'down' vi-down-line-or-history
+bindkey -M menuselect 'up' vi-up-line-or-history
+bindkey -M menuselect 'right' vi-forward-char
+
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh 2>/dev/null
+source /usr/share/doc/pkgfile/command-not-found.zsh 2>/dev/null
+
+# Spaceship Prompt
+autoload -U promptinit; promptinit
+# prompt spaceship
+
+# Load aliases and shortcuts if existent.
+[ -f "$ZDOTDIR/.zshalias" ] && source "$ZDOTDIR/.zshalias"
 
 setopt SHARE_HISTORY
-compinit -d $XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION
-zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# brew install starship
+eval "$(starship init zsh)"
