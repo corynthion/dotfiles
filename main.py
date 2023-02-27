@@ -3,7 +3,7 @@ import time
 from pathlib import Path
 from typing import Generator
 import platform
-# import distro
+import distro
 import subprocess
 
 BACKUP_AND_DELETE_DOTFILES: bool = True
@@ -61,7 +61,7 @@ def get_files(path: Path, filter: str) -> Generator[Path, None, None]:
 def get_paths() -> dict[str, dict[str, Path]]:
     script_dir: Path = Path(__file__).parent
     if Path.cwd() != script_dir:
-        raise ValueError(f"Run this file from within the {script_dir} directory.")
+        raise ValueError(f"Run this file from within {script_dir} directory.")
     home_dir: Path = Path.home()
     base_dirs: dict[str, Path] = {
         "home": home_dir,
@@ -120,10 +120,30 @@ def configure_zsh(home: Path, config_dir: Path, xdg_dirs: dict[str, Path]) -> No
         subprocess.run(["git", "clone", plugin_url, plugin_dir])
 
 
+def install_zsh_tools() -> None:
+    tools: list[str] = [
+        "autojump",
+        "bat",
+        "exa",
+        "fd",
+        "fzf",
+        "ripgrep",
+        "git",
+        "neofetch",
+        "neovim",
+        "python@3.11",
+        "neofetch",
+        "node",
+    ]
+    for tool in tools:
+        subprocess.run(["brew", "install", tool])
+
+
 def main() -> None:
-    base_dirs: dict[str, Path] = get_paths()["base_dirs"]
-    xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
-    home: Path = base_dirs["home"]
+    install_zsh_tools()
+    # base_dirs: dict[str, Path] = get_paths()["base_dirs"]
+    # xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
+    # home: Path = base_dirs["home"]
     # get_os()
     # if BACKUP_AND_DELETE_DOTFILES:
     #     filter: list[str] = [".Trash", ".vscode", ".ssh", ".zprofile", ".gitconfig"]
@@ -132,23 +152,12 @@ def main() -> None:
     #         backup_dotfiles(home, backup_dir, filter)
     #         remove_dotfiles(home, filter)
     # create_xdg_dirs(xdg_dirs)
-    config_dir: Path = base_dirs["config"]
-    configure_zsh(home, config_dir, xdg_dirs)
+    # config_dir: Path = base_dirs["config"]
+    # configure_zsh(home, config_dir, xdg_dirs)
 
 
 if __name__ == "__main__":
     main()
-
-# zcache_dir: Path = xdg_dirs["xdg_cache_home"] / "zsh"
-# zcache_dir.mkdir(parents=True, exist_ok=True)
-# os.makedirs(os.path.join(ZDOTDIR, 'plugins'))
-# os.symlink(os.path.join(DOTFILES, 'config/zsh/zshenv'), os.path.expanduser('~/.zshenv'))
-# os.symlink(os.path.join(DOTFILES, 'config/zsh/zshrc'), os.path.join(ZDOTDIR, '.zshrc'))
-# os.symlink(os.path.join(DOTFILES, 'config/zsh/zshalias'), os.path.join(ZDOTDIR, '.zshalias'))
-# shutil.move('zsh-*', os.path.join(ZDOTDIR, 'plugins'))
-# # Set up Starship Prompt
-# os.symlink(os.path.join(DOTFILES, 'config/starship'), os.path.join(XDG_CONFIG_DIR, 'starship'))
-
 
 # def configure_nord_theme() -> None:
 # # Set up Nord Color Iterm2
@@ -157,10 +166,6 @@ if __name__ == "__main__":
 # shutil.move('nord-iterm2-0.2.0/src/xml/Nord.itermcolors', os.path.join(XDG_CONFIG_DIR, 'Nord.itermcolors'))
 # os.remove('v0.2.0.zip')
 # shutil.rmtree('nord-iterm2-0.2.0')
-
-
-# def configure_neovim() -> None:
-# # Set up Neovim
 # os.symlink(os.path.join(DOTFILES, 'config/nvim'), os.path.join(XDG_CONFIG_DIR, 'nvim'))
 # subprocess.run(['python3', '-m', 'pip', 'install', '--user', '--upgrade', 'pynvim'])
 # subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
@@ -168,33 +173,17 @@ if __name__ == "__main__":
 # subprocess.run(['brew', 'install', 'node'])
 # subprocess.run(['npm', 'install', '-g', 'npm'])
 # subprocess.run(['npm', 'install', '-g', 'ne
-
-# echo "Installing autojump"
-# echo "Installing bat"
-# echo "Installing broot"
-# echo "Installing doitlive"
-# echo "Installing exa"
-# echo "Installing figlet"
-# echo "Installing howdoi"
-# echo "Installing hyperfine"
-# echo "Installing lf"
-# echo "Installing neofetch"
-# echo "Installing neofetch"
-# echo "Installing nnn"
-# echo "Installing procs"
-# echo "Installing speedread"
-# echo "Installing starship"
-# echo "Installing tealdeer"
-# echo "Installing terminalizer"
-# echo "Installing thefuck"
-# echo "Installing timetrap"
-# echo "Installing tldr"
-# echo "Installing tokei"
-# echo "Installing trash-cli"
-# echo "Installing bat"
-# echo "Installing fd-find"
-# echo "Installing fzf"
-# echo "Installing git"
-# echo "Installing neovim"
-# echo "Installing python*"
-# echo "Installing ripgrep"
+# 162  brew install pip3
+# 166  python - m ensurepip - -default-pip
+# 170  pip3 install - -user - -upgrade pynvim
+# 198  npm install - g neovim
+brew install autojump
+brew install bat
+brew install exa
+brew install fd
+brew install fzf
+brew install ripgrep
+brew install git
+brew install neofetch
+brew install neovim
+brew install python@3.11

@@ -49,5 +49,6 @@ fpath=("$ZDOTDIR/plugins/zsh-completions/src" $fpath)
 setopt SHARE_HISTORY
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
 # brew install starship
 eval "$(starship init zsh)"

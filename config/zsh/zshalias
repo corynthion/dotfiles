@@ -6,10 +6,10 @@ alias edit-nvim="vim $XDG_CONFIG_HOME/nvim/init.lua"
 
 # # LS
 alias c=cd
-alias ls="ls -AG"
-alias l=ls
-alias ll="ls -l"
-# alias ls='exa -al --color=always --group-directories-first'
+alias ls='exa -al --color=always --group-directories-first'
+# alias ls="ls -AG"
+# alias l=ls
+# alias ll="ls -l"
 
 alias history="history 0"
 
@@ -23,9 +23,9 @@ alias d="clear"
 
 alias python=python3
 alias pip=pip3
+alias vim=nvim
 alias v=vim
 alias vi=vim
-# alias vim=nvim
 
 # GREP
 alias grep='grep --color=auto'
