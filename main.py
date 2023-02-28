@@ -3,7 +3,7 @@ import time
 from pathlib import Path
 from typing import Generator
 import platform
-import distro
+# import distro
 import subprocess
 
 BACKUP_AND_DELETE_DOTFILES: bool = True
@@ -17,8 +17,8 @@ def get_os() -> None:
     elif os_name == "Linux":  # Linux
         os_version = platform.release()
         print(f"Linux version: {os_version}")
-        linux_distribution: str = distro.name()
-        print(f"Distribution: {linux_distribution}")
+        # linux_distribution: str = distro.name()
+        # print(f"Distribution: {linux_distribution}")
 
 
 def backup_dotfile(dotfile: Path, backup_dir: Path) -> None:
@@ -26,6 +26,8 @@ def backup_dotfile(dotfile: Path, backup_dir: Path) -> None:
     if dotfile.is_file():
         shutil.copy(str(dotfile), str(backup_path))
     elif dotfile.is_dir():
+        print(backup_path)
+        print(dotfile)
         shutil.copytree(str(dotfile), str(backup_path))
 
 
@@ -45,6 +47,10 @@ def backup_dotfiles(home: Path, backup_dir: Path, filter: list[str]) -> None:
     backup_sub_dir: Path = backup_dir / f"dotfiles_{timestamp}"
     backup_sub_dir.mkdir(parents=True, exist_ok=True)
     for dotfile in dotfiles:
+        if dotfile.name == ".config":
+            iterm2 = dotfile / "iterm2"
+            if iterm2.exists():
+                shutil.rmtree(str(iterm2))
         if dotfile.exists():
             backup_dotfile(dotfile, backup_sub_dir)
 
@@ -139,51 +145,59 @@ def install_zsh_tools() -> None:
         subprocess.run(["brew", "install", tool])
 
 
-def main() -> None:
-    install_zsh_tools()
-    # base_dirs: dict[str, Path] = get_paths()["base_dirs"]
-    # xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
-    # home: Path = base_dirs["home"]
-    # get_os()
-    # if BACKUP_AND_DELETE_DOTFILES:
-    #     filter: list[str] = [".Trash", ".vscode", ".ssh", ".zprofile", ".gitconfig"]
-    #     if has_dotfiles(home, filter):
-    #         backup_dir: Path = base_dirs["backups"]
-    #         backup_dotfiles(home, backup_dir, filter)
-    #         remove_dotfiles(home, filter)
-    # create_xdg_dirs(xdg_dirs)
-    # config_dir: Path = base_dirs["config"]
-    # configure_zsh(home, config_dir, xdg_dirs)
+def configure_nvim(config_dir: Path, xdg_dirs: dict[str, Path]) -> None:
+    nvim_local_dir: Path = config_dir / "nvim"
+    nvim_dir: Path = xdg_dirs["config"] / "nvim"
+    nvim_dir.symlink_to(nvim_local_dir)
 
+
+def main() -> None:
+    # install_zsh_tools()
+    base_dirs: dict[str, Path] = get_paths()["base_dirs"]
+    xdg_dirs: dict[str, Path] = get_paths()["xdg_dirs"]
+    home: Path = base_dirs["home"]
+    get_os()
+    if BACKUP_AND_DELETE_DOTFILES:
+        filter: list[str] = [".Trash", ".vscode", ".ssh", ".zprofile", ".gitconfig"]
+        if has_dotfiles(home, filter):
+            backup_dir: Path = base_dirs["backups"]
+            backup_dotfiles(home, backup_dir, filter)
+            remove_dotfiles(home, filter)
+    create_xdg_dirs(xdg_dirs)
+    config_dir: Path = base_dirs["config"]
+    configure_zsh(home, config_dir, xdg_dirs)
+    configure_nvim(config_dir, xdg_dirs)
+
+    # def configure_nord_theme() -> None:
+    # # Set up Nord Color Iterm2
+    # subprocess.run(['curl', '-OL', 'https://github.com/arcticicestudio/nord-iterm2/archive/refs/tags/v0.2.0.zip'])
+    # subprocess.run(['unzip', 'v0.2.0.zip'])
+    # shutil.move('nord-iterm2-0.2.0/src/xml/Nord.itermcolors', os.path.join(XDG_CONFIG_DIR, 'Nord.itermcolors'))
+    # os.remove('v0.2.0.zip')
+    # shutil.rmtree('nord-iterm2-0.2.0')
+    # os.symlink(os.path.join(DOTFILES, 'config/nvim'), os.path.join(XDG_CONFIG_DIR, 'nvim'))
+    # subprocess.run(['python3', '-m', 'pip', 'install', '--user', '--upgrade', 'pynvim'])
+    # subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
+    # subprocess.run(['sudo', 'gem', 'install', 'neovim'])
+    # subprocess.run(['brew', 'install', 'node'])
+    # subprocess.run(['npm', 'install', '-g', 'npm'])
+    # subprocess.run(['npm', 'install', '-g', 'ne
+    # 162  brew install pip3
+    # 166  python - m ensurepip - -default-pip
+    # 170  pip3 install - -user - -upgrade pynvim
+    # 198  npm install - g neovim
+    # brew install autojump
+    # brew install bat
+    # brew install exa
+    # brew install fd
+    # brew install fzf
+    # brew install ripgrep
+    # brew install git
+    # brew install neofetch
+    # brew install neovim
+    # brew install python@3.11
 
 if __name__ == "__main__":
     main()
 
-# def configure_nord_theme() -> None:
-# # Set up Nord Color Iterm2
-# subprocess.run(['curl', '-OL', 'https://github.com/arcticicestudio/nord-iterm2/archive/refs/tags/v0.2.0.zip'])
-# subprocess.run(['unzip', 'v0.2.0.zip'])
-# shutil.move('nord-iterm2-0.2.0/src/xml/Nord.itermcolors', os.path.join(XDG_CONFIG_DIR, 'Nord.itermcolors'))
-# os.remove('v0.2.0.zip')
-# shutil.rmtree('nord-iterm2-0.2.0')
-# os.symlink(os.path.join(DOTFILES, 'config/nvim'), os.path.join(XDG_CONFIG_DIR, 'nvim'))
-# subprocess.run(['python3', '-m', 'pip', 'install', '--user', '--upgrade', 'pynvim'])
-# subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
-# subprocess.run(['sudo', 'gem', 'install', 'neovim'])
-# subprocess.run(['brew', 'install', 'node'])
-# subprocess.run(['npm', 'install', '-g', 'npm'])
-# subprocess.run(['npm', 'install', '-g', 'ne
-# 162  brew install pip3
-# 166  python - m ensurepip - -default-pip
-# 170  pip3 install - -user - -upgrade pynvim
-# 198  npm install - g neovim
-brew install autojump
-brew install bat
-brew install exa
-brew install fd
-brew install fzf
-brew install ripgrep
-brew install git
-brew install neofetch
-brew install neovim
-brew install python@3.11
+
