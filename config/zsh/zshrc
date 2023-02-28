@@ -2,8 +2,6 @@ export OLD_PATH="$PATH"
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 typeset -U PATH path
 
-# Neofetch 
-# neofetch
 
 # Enable colors and change prompt:
 autoload -U colors && colors
@@ -48,7 +46,11 @@ fpath=("$ZDOTDIR/plugins/zsh-completions/src" $fpath)
 
 setopt SHARE_HISTORY
 eval "$(/opt/homebrew/bin/brew shellenv)"
-
+#
 [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
 # brew install starship
 eval "$(starship init zsh)"
+# Neofetch 
+neofetch
+
+
